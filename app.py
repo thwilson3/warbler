@@ -129,7 +129,7 @@ def list_users():
 
     Can take a 'q' param in querystring to search by that username.
     """
-
+    breakpoint()
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
