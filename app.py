@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm
 from models import db, connect_db, User, Message
 
 load_dotenv()
@@ -36,6 +36,14 @@ def add_user_to_g():
 
     else:
         g.user = None
+
+
+@app.before_request
+def add_csrf_to_user():
+    """Attach csrf form to current user"""
+
+    g.csrf_form = CSRFProtectForm()
+
 
 
 def do_login(user):
@@ -116,8 +124,19 @@ def logout():
 
     form = g.csrf_form
 
-    # IMPLEMENT THIS AND FIX BUG
-    # DO NOT CHANGE METHOD ON ROUTE
+    if form.validate_on_submit():
+
+        do_logout()
+
+        flash("Successfully logged out!")
+
+        return redirect('/')
+
+    else:
+
+        flash("Access unauthorized.", "danger")
+
+        return redirect("/")
 
 
 ##############################################################################
@@ -129,7 +148,7 @@ def list_users():
 
     Can take a 'q' param in querystring to search by that username.
     """
-    breakpoint()
+    # breakpoint()
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
