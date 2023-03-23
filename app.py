@@ -343,6 +343,23 @@ def delete_message(message_id):
 
     return redirect(f"/users/{g.user.id}")
 
+@app.post('/messages/<int:message_id>/like')
+def like_message(message_id):
+    "Like a message."
+
+    ##TODO add crsf protection##
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    liked_msg = Message.query.get_or_404(message_id)
+    g.user.likes.append(liked_msg)
+    db.session.commit()
+
+    return redirect('/')
+
+
+
 
 ##############################################################################
 # Homepage and error pages
@@ -351,7 +368,7 @@ def delete_message(message_id):
 @app.get('/')
 def homepage():
     """Show homepage:
-    
+
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
