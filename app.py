@@ -240,8 +240,6 @@ def stop_following(follow_id):
 def profile():
     """Update profile for current user."""
 
-    # IMPLEMENT THIS
-
     form = EditUserForm(obj=g.user)
 
     if not g.user:
@@ -357,14 +355,14 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-    following = [follower.id for follower in g.user.following]
-    followsmaybe = Follows.user_being_followed_id
-
-    # breakpoint()
+    
     if g.user:
+        following = [follower.id for follower in g.user.following]
+        following.append(g.user.id)
+
         messages = (Message
                     .query
-                    .filter(Message.user.has(following))
+                    .filter(Message.user_id.in_(following))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
