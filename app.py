@@ -354,8 +354,14 @@ def like_message(message_id):
     # breakpoint()
     liked_msg = Message.query.get_or_404(message_id)
 
-    if liked_msg.user_id != g.user.id:
+    if liked_msg.user_id != g.user.id and liked_msg not in g.user.likes:
+
         g.user.likes.append(liked_msg)
+        db.session.commit()
+
+    elif liked_msg.user_id != g.user.id and liked_msg in g.user.likes:
+
+        g.user.likes.remove(liked_msg)
         db.session.commit()
 
     return redirect('/')

@@ -46,6 +46,19 @@
               {{ message.timestamp.strftime('%d %B %Y') }}
             </span>
         </div>
+        <div>
+          {% if message.user_id != g.user.id %}
+          {% if message not in g.user.likes %}
+          <form action="/messages/{{ message.id }}/like" method="POST" style="position: absolute; bottom:0; right: 10px;">
+            <button type="submit"><i class="bi bi-balloon-heart"></i></button>
+          </form>
+          {% else %}
+          <form action="/messages/{{ message.id }}/like" method="POST" style="position: absolute; bottom:0; right: 10px;">
+            <button type="submit"><i class="bi bi-balloon-heart-fill"></i></button>
+          </form>
+          {% endif %}
+          {% endif %}
+        </div>
       </li>
     </ul>
   </div>
