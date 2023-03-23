@@ -46,7 +46,7 @@
 
     <div class="col-lg-6 col-md-8 col-sm-12">
       <ul class="list-group" id="messages">
-        {% for msg in messages %}
+        {% for msg in g.user.likes %}
           <li class="list-group-item">
             <a href="/messages/{{ msg.id }}" class="message-link"/>
             <a href="/users/{{ msg.user.id }}">
@@ -58,17 +58,9 @@
               <p>{{ msg.text }}</p>
             </div>
           </li>
-          {% if msg.user_id != g.user.id %}
-            {% if msg not in g.user.likes %}
-            <form action="/messages/{{ msg.id }}/like" method="POST">
-              <button type="submit"><i class="bi bi-balloon-heart"></i></button>
-            </form>
-            {% else %}
-            <form action="/messages/{{ msg.id }}/like" method="POST">
-              <button type="submit"><i class="bi bi-balloon-heart-fill"></i></button>
-            </form>
-            {% endif %}
-          {% endif %}
+          <form action="/messages/{{ msg.id }}/like" method="POST">
+            <button type="submit"><i class="bi bi-balloon-heart"></i></button>
+          </form>
         {% endfor %}
       </ul>
     </div>

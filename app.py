@@ -351,12 +351,26 @@ def like_message(message_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-
+    # breakpoint()
     liked_msg = Message.query.get_or_404(message_id)
-    g.user.likes.append(liked_msg)
-    db.session.commit()
+
+    if liked_msg.user_id != g.user.id:
+        g.user.likes.append(liked_msg)
+        db.session.commit()
 
     return redirect('/')
+
+@app.get('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Shows user likes"""
+
+     ##TODO add crsf protection##
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('/users/likes.html')
 
 
 
