@@ -206,7 +206,7 @@ def start_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-
+    ##TODO add crsf protection##
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -224,7 +224,7 @@ def stop_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-
+    ##TODO add crsf protection##
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -274,7 +274,7 @@ def delete_user():
 
     Redirect to signup page.
     """
-
+    ##TODO add crsf protection##
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -351,11 +351,11 @@ def delete_message(message_id):
 @app.get('/')
 def homepage():
     """Show homepage:
-
+    
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-    
+    ###TODOupdated docstring
     if g.user:
         following = [follower.id for follower in g.user.following]
         following.append(g.user.id)
