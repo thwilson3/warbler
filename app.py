@@ -22,7 +22,7 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 ##############################################################################
 # User signup/login/logout
 
@@ -148,7 +148,7 @@ def list_users():
 
     Can take a 'q' param in querystring to search by that username.
     """
-    # breakpoint()
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -166,7 +166,7 @@ def list_users():
 @app.get('/users/<int:user_id>')
 def show_user(user_id):
     """Show user profile."""
-
+    
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -233,7 +233,7 @@ def stop_following(follow_id):
         return redirect("/")
 
     form = g.csrf_form
-    # breakpoint()
+
     if form.validate_on_submit():
         followed_user = User.query.get(follow_id)
         g.user.following.remove(followed_user)
@@ -355,22 +355,25 @@ def delete_message(message_id):
 @app.post('/messages/<int:message_id>/like')
 def like_message(message_id):
     "Like a message."
-
+    ###TODO updated doc string, endpoint@355, function name
     form = g.csrf_form
-
+    ###TODO move line 359 below user authentication
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    # breakpoint()
-    if form.validate_on_submit():
 
+    if form.validate_on_submit():
+        ###TODO liked_msg should be msg
         liked_msg = Message.query.get_or_404(message_id)
 
-        if liked_msg.user_id != g.user.id and liked_msg not in g.user.likes:
+        if liked_msg.user_id == g.user.id:
+            ###raise error message 404
+        
+        if liked_msg not in g.user.likes:
 
             g.user.likes.append(liked_msg)
             db.session.commit()
-
+    ##### remove first part of elif
         elif liked_msg.user_id != g.user.id and liked_msg in g.user.likes:
 
             g.user.likes.remove(liked_msg)
@@ -382,13 +385,13 @@ def like_message(message_id):
 def show_likes(user_id):
     """Shows user likes"""
 
-     ##TODO add crsf protection##
+ 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('/users/likes.html')
+    return render_template('/users/likes.html', user=user)
 
 
 
@@ -402,7 +405,7 @@ def homepage():
     """Show homepage:
 
     - anon users: no messages
-    - logged in: 100 most recent messages of followed_users
+    - logged in: 100 most recent messages of followed_users and your own messages
     """
     ###TODOupdated docstring
     if g.user:
