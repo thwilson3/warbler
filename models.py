@@ -74,7 +74,8 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-
+    #TODO: update name to liked_msgs or something (actually accessing liked msg
+    # instances, not like instances)
     likes = db.relationship('Message', secondary='likes', backref="users")
 
     messages = db.relationship('Message', backref="user")

@@ -57,9 +57,9 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <form action="/messages/{{ msg.id }}/like" method="POST" style="z-index: 30;">
+            <form action="/messages/{{ msg.id }}/update_like_status" method="POST" style="z-index: 30;">
               {{g.csrf_form.hidden_tag()}}
-              <button type="submit" style="background: transparent; border: 0px; 
+              <button type="submit" style="background: transparent; border: 0px;
               color: red;"><i class="bi bi-balloon-heart-fill"></i></button>
             </form>
           </li>

@@ -49,17 +49,17 @@
         <div>
           {% if message.user_id != g.user.id %}
           {% if message not in g.user.likes %}
-          <form action="/messages/{{ message.id }}/like" method="POST" 
+          <form action="/messages/{{ message.id }}/update_like_status" method="POST"
           style="position: absolute; bottom:0; right: 10px;">
             {{g.csrf_form.hidden_tag()}}
             <button type="submit" style="background: transparent; border: 0px;">
               <i class="bi bi-balloon-heart"></i></button>
           </form>
           {% else %}
-          <form action="/messages/{{ message.id }}/like" method="POST" 
+          <form action="/messages/{{ message.id }}/update_like_status" method="POST"
           style="position: absolute; bottom:0; right: 10px;">
             {{g.csrf_form.hidden_tag()}}
-            <button type="submit" style="background: transparent; border: 0px; 
+            <button type="submit" style="background: transparent; border: 0px;
             color: red;"><i class="bi bi-balloon-heart-fill"></i></button>
           </form>
           {% endif %}

@@ -166,7 +166,7 @@ def list_users():
 @app.get('/users/<int:user_id>')
 def show_user(user_id):
     """Show user profile."""
-    
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -352,31 +352,33 @@ def delete_message(message_id):
 
     return redirect(f"/users/{g.user.id}")
 
-@app.post('/messages/<int:message_id>/like')
-def like_message(message_id):
-    "Like a message."
-    ###TODO updated doc string, endpoint@355, function name
-    form = g.csrf_form
-    ###TODO move line 359 below user authentication
+@app.post('/messages/<int:message_id>/update_like_status')
+def handle_like(message_id):
+    "Like or unlike message."
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    form = g.csrf_form
+
     if form.validate_on_submit():
-        ###TODO liked_msg should be msg
-        liked_msg = Message.query.get_or_404(message_id)
 
-        if liked_msg.user_id == g.user.id:
-            ###raise error message 404
-        
-        if liked_msg not in g.user.likes:
+        msg = Message.query.get_or_404(message_id)
 
-            g.user.likes.append(liked_msg)
+        if msg.user_id == g.user.id:
+            flash("Access unauthorized.", "danger")
+            return redirect("/")
+
+
+        if msg not in g.user.likes:
+
+            g.user.likes.append(msg)
             db.session.commit()
-    ##### remove first part of elif
-        elif liked_msg.user_id != g.user.id and liked_msg in g.user.likes:
 
-            g.user.likes.remove(liked_msg)
+        elif msg in g.user.likes:
+
+            g.user.likes.remove(msg)
             db.session.commit()
 
     return redirect('/')
@@ -385,7 +387,7 @@ def like_message(message_id):
 def show_likes(user_id):
     """Shows user likes"""
 
- 
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -407,7 +409,7 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users and your own messages
     """
-    ###TODOupdated docstring
+
     if g.user:
         following = [follower.id for follower in g.user.following]
         following.append(g.user.id)
