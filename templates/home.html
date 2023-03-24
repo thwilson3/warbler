@@ -61,10 +61,12 @@
           {% if msg.user_id != g.user.id %}
             {% if msg not in g.user.likes %}
             <form action="/messages/{{ msg.id }}/like" method="POST">
+              {{g.csrf_form.hidden_tag()}}
               <button type="submit"><i class="bi bi-balloon-heart"></i></button>
             </form>
             {% else %}
             <form action="/messages/{{ msg.id }}/like" method="POST">
+              {{g.csrf_form.hidden_tag()}}
               <button type="submit"><i class="bi bi-balloon-heart-fill"></i></button>
             </form>
             {% endif %}

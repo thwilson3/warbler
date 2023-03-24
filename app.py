@@ -206,14 +206,17 @@ def start_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-    ##TODO add crsf protection##
+
+    form = g.csrf_form
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    followed_user = User.query.get_or_404(follow_id)
-    g.user.following.append(followed_user)
-    db.session.commit()
+    if form.validate_on_submit():
+        followed_user = User.query.get_or_404(follow_id)
+        g.user.following.append(followed_user)
+        db.session.commit()
 
     return redirect(f"/users/{g.user.id}/following")
 
@@ -224,14 +227,17 @@ def stop_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-    ##TODO add crsf protection##
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    followed_user = User.query.get(follow_id)
-    g.user.following.remove(followed_user)
-    db.session.commit()
+    form = g.csrf_form
+    # breakpoint()
+    if form.validate_on_submit():
+        followed_user = User.query.get(follow_id)
+        g.user.following.remove(followed_user)
+        db.session.commit()
 
     return redirect(f"/users/{g.user.id}/following")
 
@@ -274,15 +280,18 @@ def delete_user():
 
     Redirect to signup page.
     """
-    ##TODO add crsf protection##
+    form = g.csrf_form
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    do_logout()
+    if form.validate_on_submit():
 
-    db.session.delete(g.user)
-    db.session.commit()
+        do_logout()
+
+        db.session.delete(g.user)
+        db.session.commit()
 
     return redirect("/signup")
 
@@ -347,22 +356,25 @@ def delete_message(message_id):
 def like_message(message_id):
     "Like a message."
 
-    ##TODO add crsf protection##
+    form = g.csrf_form
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     # breakpoint()
-    liked_msg = Message.query.get_or_404(message_id)
+    if form.validate_on_submit():
 
-    if liked_msg.user_id != g.user.id and liked_msg not in g.user.likes:
+        liked_msg = Message.query.get_or_404(message_id)
 
-        g.user.likes.append(liked_msg)
-        db.session.commit()
+        if liked_msg.user_id != g.user.id and liked_msg not in g.user.likes:
 
-    elif liked_msg.user_id != g.user.id and liked_msg in g.user.likes:
+            g.user.likes.append(liked_msg)
+            db.session.commit()
 
-        g.user.likes.remove(liked_msg)
-        db.session.commit()
+        elif liked_msg.user_id != g.user.id and liked_msg in g.user.likes:
+
+            g.user.likes.remove(liked_msg)
+            db.session.commit()
 
     return redirect('/')
 
